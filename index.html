@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Challenge of SOI ❤️</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF6EF;
+  --card:#FFFFFF;
+  --ink:#4A3B47;
+  --sub:#A7929F;
+  --pink:#FF5A79;
+  --pink-deep:#E63E60;
+  --pink-soft:#FFE9EE;
+  --yellow:#FFC531;
+  --yellow-deep:#E2A400;
+  --yellow-soft:#FFF4D6;
+  --mint:#2EC486;
+  --mint-deep:#1FA76C;
+  --mint-soft:#E2F8EE;
+  --grey:#C9BFC9;
+  --line:#F6E7E3;
+  --radius:20px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  background:#F3E3DB;
+  font-family:'Noto Sans KR',sans-serif;
+  color:var(--ink);
+  display:flex;justify-content:center;
+}
+.app{
+  width:100%;max-width:430px;height:100dvh;
+  background:var(--bg);
+  display:flex;flex-direction:column;
+  position:relative;overflow:hidden;
+  box-shadow:0 0 40px rgba(0,0,0,.12);
+}
+/* ---------- header ---------- */
+header{
+  padding:20px 20px 8px;
+  text-align:center;flex:none;
+}
+.app-title{
+  font-family:'Jua',sans-serif;
+  font-size:26px;letter-spacing:.5px;color:var(--ink);
+}
+.app-title .soi{color:var(--pink);}
+.app-title .heart{display:inline-block;animation:beat 1.6s ease-in-out infinite;transform-origin:center;}
+@keyframes beat{0%,100%{transform:scale(1)}12%{transform:scale(1.25)}24%{transform:scale(1)}36%{transform:scale(1.18)}48%{transform:scale(1)}}
+/* ---------- screens ---------- */
+.screen{flex:1;overflow-y:auto;padding:8px 18px 96px;display:none;}
+.screen.active{display:block;}
+/* ---------- home: heart gauge ---------- */
+.score-card{
+  background:var(--card);border-radius:24px;
+  padding:18px 16px 14px;text-align:center;
+  box-shadow:0 4px 0 var(--line);
+  margin-bottom:14px;position:relative;
+}
+.heart-gauge{position:relative;width:150px;height:140px;margin:0 auto;}
+.heart-gauge svg{width:100%;height:100%;overflow:visible;}
+.gauge-score{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;pointer-events:none;
+  padding-top:6px;
+}
+.gauge-score .num{
+  font-family:'Jua',sans-serif;font-size:40px;line-height:1;
+  color:var(--ink);text-shadow:0 2px 0 rgba(255,255,255,.85);
+}
+.gauge-score .unit{font-size:13px;font-weight:700;color:var(--sub);}
+.score-label{
+  font-family:'Jua',sans-serif;font-size:15px;color:var(--sub);
+  margin-bottom:2px;letter-spacing:2px;
+}
+.remain-text{margin-top:8px;font-size:14px;font-weight:500;color:var(--ink);}
+.remain-text b{color:var(--pink);font-weight:700;}
+.gift-chip{
+  margin-top:10px;display:inline-flex;align-items:center;gap:6px;
+  background:var(--yellow-soft);border:2px solid var(--yellow);
+  color:#8A6400;font-weight:700;font-size:13px;
+  padding:6px 14px;border-radius:999px;
+}
+/* ---------- calendar ---------- */
+.cal-card{
+  background:var(--card);border-radius:24px;
+  padding:16px 12px 14px;box-shadow:0 4px 0 var(--line);
+}
+.cal-head{display:flex;align-items:center;justify-content:space-between;padding:0 6px 10px;}
+.cal-title{font-family:'Jua',sans-serif;font-size:19px;}
+.cal-nav{
+  width:36px;height:36px;border:none;border-radius:12px;
+  background:var(--pink-soft);color:var(--pink);
+  font-size:18px;font-weight:700;cursor:pointer;
+  box-shadow:0 3px 0 #F5CBD5;
+}
+.cal-nav:active{transform:translateY(3px);box-shadow:none;}
+.cal-week{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:4px;}
+.cal-week span{text-align:center;font-size:12px;font-weight:700;color:var(--sub);padding:4px 0;}
+.cal-week span:first-child{color:var(--pink);}
+.cal-week span:last-child{color:#5B9BD5;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-cell{
+  aspect-ratio:1/1.15;border-radius:14px;border:none;background:transparent;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  padding-top:5px;gap:1px;cursor:pointer;position:relative;
+  font-family:'Noto Sans KR',sans-serif;
+}
+.cal-cell:disabled{cursor:default;}
+.cal-cell .d{font-size:13px;font-weight:600;color:var(--ink);line-height:1.4;}
+.cal-cell.dim .d{color:#DACFD6;}
+.cal-cell.sun .d{color:var(--pink);}
+.cal-cell.sat .d{color:#5B9BD5;}
+.cal-cell.dim.sun .d,.cal-cell.dim.sat .d{color:#DACFD6;}
+.cal-cell.today .d{
+  background:var(--pink);color:#fff;width:24px;height:24px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 3px var(--pink-soft);
+}
+.stamp{font-size:17px;line-height:1;margin-top:1px;}
+.stamp.ok{animation:pop .3s ease;}
+.stamp.fail{filter:grayscale(1);opacity:.45;font-size:14px;margin-top:3px;}
+@keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.3)}100%{transform:scale(1)}}
+.cal-hint{margin-top:10px;text-align:center;font-size:12px;color:var(--sub);}
+/* ---------- gift ---------- */
+.tabs{
+  display:flex;background:#F7E9E4;border-radius:16px;padding:4px;margin-bottom:14px;
+}
+.tab-btn{
+  flex:1;border:none;background:transparent;padding:10px 0;
+  font-family:'Jua',sans-serif;font-size:15px;color:var(--sub);
+  border-radius:12px;cursor:pointer;transition:all .15s;
+}
+.tab-btn.active{background:#fff;color:var(--pink);box-shadow:0 2px 0 var(--line);}
+.gift-card{
+  background:var(--card);border-radius:20px;padding:16px;
+  box-shadow:0 4px 0 var(--line);margin-bottom:12px;
+  display:flex;align-items:center;gap:14px;
+}
+.gift-icon{
+  width:52px;height:52px;border-radius:16px;flex:none;
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+  background:var(--pink-soft);
+}
+.gift-card.used .gift-icon{background:#F1ECEF;filter:grayscale(1);opacity:.6;}
+.gift-info{flex:1;min-width:0;}
+.gift-name{font-family:'Jua',sans-serif;font-size:17px;margin-bottom:2px;word-break:keep-all;}
+.gift-card.used .gift-name{color:var(--sub);text-decoration:line-through;}
+.gift-date{font-size:12px;color:var(--sub);line-height:1.5;}
+.use-btn{
+  flex:none;border:none;border-radius:14px;padding:10px 14px;
+  font-family:'Jua',sans-serif;font-size:14px;color:#fff;cursor:pointer;
+  background:var(--mint);box-shadow:0 4px 0 var(--mint-deep);
+}
+.use-btn:active{transform:translateY(4px);box-shadow:none;}
+.done-badge{
+  flex:none;font-size:12px;font-weight:700;color:var(--sub);
+  background:#F1ECEF;border-radius:999px;padding:6px 12px;
+}
+.empty{
+  text-align:center;color:var(--sub);padding:56px 0;font-size:14px;line-height:1.8;
+}
+.empty .big{font-size:44px;display:block;margin-bottom:10px;}
+/* ---------- settings ---------- */
+.set-card{
+  background:var(--card);border-radius:20px;padding:18px 16px;
+  box-shadow:0 4px 0 var(--line);margin-bottom:14px;
+}
+.set-title{
+  font-family:'Jua',sans-serif;font-size:17px;margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+.field{margin-bottom:12px;}
+.field label{display:block;font-size:13px;font-weight:700;color:var(--sub);margin-bottom:6px;}
+.field input{
+  width:100%;border:2px solid var(--line);border-radius:14px;
+  padding:12px 14px;font-size:15px;font-family:'Noto Sans KR',sans-serif;
+  color:var(--ink);background:#FFFBF9;outline:none;
+}
+.field input:focus{border-color:var(--pink);}
+.btn{
+  width:100%;border:none;border-radius:16px;padding:14px 0;
+  font-family:'Jua',sans-serif;font-size:16px;color:#fff;cursor:pointer;
+}
+.btn.pink{background:var(--pink);box-shadow:0 4px 0 var(--pink-deep);}
+.btn.yellow{background:var(--yellow);color:#7A5800;box-shadow:0 4px 0 var(--yellow-deep);}
+.btn:active{transform:translateY(4px);box-shadow:none!important;}
+/* ---------- bottom nav ---------- */
+nav{
+  position:absolute;left:0;right:0;bottom:0;
+  background:#fff;border-top:2px solid var(--line);
+  display:flex;padding:8px 10px calc(10px + env(safe-area-inset-bottom));
+}
+.nav-btn{
+  flex:1;border:none;background:transparent;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  color:#C9BAC4;padding:4px 0;border-radius:14px;transition:color .15s;
+}
+.nav-btn svg{width:26px;height:26px;}
+.nav-btn span{font-family:'Jua',sans-serif;font-size:11px;}
+.nav-btn.active{color:var(--pink);}
+.nav-btn.active svg{filter:drop-shadow(0 2px 4px rgba(255,90,121,.35));}
+/* ---------- modal ---------- */
+.overlay{
+  position:absolute;inset:0;background:rgba(74,59,71,.45);
+  display:none;align-items:center;justify-content:center;z-index:50;padding:24px;
+}
+.overlay.show{display:flex;}
+.modal{
+  background:#fff;border-radius:26px;width:100%;max-width:330px;
+  padding:24px 20px 20px;text-align:center;
+  animation:rise .22s ease;box-shadow:0 8px 0 rgba(0,0,0,.08);
+}
+@keyframes rise{from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal h3{font-family:'Jua',sans-serif;font-size:19px;margin-bottom:4px;}
+.modal .sub{font-size:13px;color:var(--sub);margin-bottom:16px;}
+/* pin */
+.pin-dots{display:flex;justify-content:center;gap:14px;margin:14px 0 20px;}
+.pin-dot{
+  width:16px;height:16px;border-radius:50%;
+  background:var(--pink-soft);border:2px solid #F5CBD5;transition:all .1s;
+}
+.pin-dot.on{background:var(--pink);border-color:var(--pink);transform:scale(1.15);}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.pin-key{
+  border:none;border-radius:16px;background:#FFF3F0;
+  font-family:'Jua',sans-serif;font-size:22px;color:var(--ink);
+  padding:13px 0;cursor:pointer;box-shadow:0 3px 0 #F3DCD6;
+}
+.pin-key:active{transform:translateY(3px);box-shadow:none;}
+.pin-key.func{background:transparent;box-shadow:none;font-size:16px;color:var(--sub);}
+.pin-wrap.shake{animation:shake .35s;}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+/* score modal */
+.score-input{
+  width:150px;margin:6px auto 14px;border:3px solid var(--pink-soft);
+  border-radius:18px;padding:10px;text-align:center;
+  font-family:'Jua',sans-serif;font-size:34px;color:var(--pink);
+  outline:none;background:#FFFBF9;
+}
+.score-input:focus{border-color:var(--pink);}
+.quick-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px;}
+.quick-btn{
+  border:none;border-radius:14px;padding:11px 0;cursor:pointer;
+  font-family:'Jua',sans-serif;font-size:15px;
+  background:var(--yellow-soft);color:#8A6400;box-shadow:0 3px 0 #F0DCA8;
+}
+.quick-btn:active{transform:translateY(3px);box-shadow:none;}
+.modal-row{display:flex;gap:10px;}
+.btn.grey{background:#EDE4E8;color:var(--sub);box-shadow:0 4px 0 #DACFD6;}
+/* earn modal */
+.earn-modal{overflow:hidden;position:relative;}
+.earn-emoji{font-size:56px;margin:6px 0 8px;animation:bounce .8s ease infinite alternate;}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-10px)}}
+.earn-name{
+  font-family:'Jua',sans-serif;font-size:22px;color:var(--pink);
+  background:var(--pink-soft);border-radius:16px;padding:12px;margin:10px 0 18px;
+  word-break:keep-all;
+}
+.confetti{position:absolute;top:-20px;font-size:16px;animation:fall linear forwards;pointer-events:none;}
+@keyframes fall{to{transform:translateY(420px) rotate(360deg);opacity:.2}}
+/* toast */
+.toast{
+  position:absolute;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--ink);color:#fff;font-size:14px;font-weight:500;
+  padding:11px 22px;border-radius:999px;opacity:0;transition:all .25s;
+  pointer-events:none;z-index:60;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="app-title">CHALLENGE of <span class="soi">SOI</span> <span class="heart">❤️</span></div>
+  </header>
+
+  <!-- HOME -->
+  <div class="screen active" id="screen-home">
+    <div class="score-card">
+      <div class="score-label">MY SCORE</div>
+      <div class="heart-gauge">
+        <svg viewBox="0 0 100 92">
+          <defs>
+            <clipPath id="heartClip">
+              <path d="M50 88 C20 66 5 46 5 28 C5 12 18 4 30 4 C39 4 46 9 50 16 C54 9 61 4 70 4 C82 4 95 12 95 28 C95 46 80 66 50 88 Z"/>
+            </clipPath>
+          </defs>
+          <path d="M50 88 C20 66 5 46 5 28 C5 12 18 4 30 4 C39 4 46 9 50 16 C54 9 61 4 70 4 C82 4 95 12 95 28 C95 46 80 66 50 88 Z"
+                fill="#FFE9EE"/>
+          <rect id="gaugeFill" x="0" y="92" width="100" height="92" fill="#FF5A79" clip-path="url(#heartClip)" style="transition:y .6s ease;"/>
+          <path d="M50 88 C20 66 5 46 5 28 C5 12 18 4 30 4 C39 4 46 9 50 16 C54 9 61 4 70 4 C82 4 95 12 95 28 C95 46 80 66 50 88 Z"
+                fill="none" stroke="#FF5A79" stroke-width="4"/>
+        </svg>
+        <div class="gauge-score">
+          <div class="num" id="scoreNum">0</div>
+          <div class="unit">/ 100점</div>
+        </div>
+      </div>
+      <div class="remain-text" id="remainText"></div>
+      <div class="gift-chip">🎁 <span id="currentGiftChip"></span></div>
+    </div>
+
+    <div class="cal-card">
+      <div class="cal-head">
+        <button class="cal-nav" id="prevMonth">‹</button>
+        <div class="cal-title" id="calTitle"></div>
+        <button class="cal-nav" id="nextMonth">›</button>
+      </div>
+      <div class="cal-week">
+        <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cal-hint">날짜를 누르면 점수를 줄 수 있어요 (아빠 전용 🔒)</div>
+    </div>
+  </div>
+
+  <!-- GIFT -->
+  <div class="screen" id="screen-gift">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="avail">사용 가능</button>
+      <button class="tab-btn" data-tab="used">사용 완료</button>
+    </div>
+    <div id="giftList"></div>
+  </div>
+
+  <!-- SETTING -->
+  <div class="screen" id="screen-setting">
+    <div class="set-card">
+      <div class="set-title">🎁 선물 설정</div>
+      <div class="field">
+        <label>이번 라운드 선물</label>
+        <input type="text" id="inpGiftCurrent" placeholder="예: 로블록스 30분">
+      </div>
+      <div class="field">
+        <label>다음 라운드 선물</label>
+        <input type="text" id="inpGiftNext" placeholder="예: 아이스크림 1개">
+      </div>
+      <button class="btn pink" id="saveGifts">선물 저장</button>
+    </div>
+    <div class="set-card">
+      <div class="set-title">🔒 암호 변경</div>
+      <div class="sub" style="font-size:13px;color:var(--sub);margin-bottom:12px;">점수를 주거나 선물을 사용할 때 필요한 숫자 4자리예요.</div>
+      <button class="btn yellow" id="changePin">암호 변경하기</button>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <button class="nav-btn active" data-screen="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/>
+      </svg>
+      <span>HOME</span>
+    </button>
+    <button class="nav-btn" data-screen="gift">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8"/>
+        <path d="M12 8v13"/><path d="M12 8s-1.5-5-4.5-5C5.5 3 5 4.5 5 5.5 5 7.5 8 8 12 8Z"/>
+        <path d="M12 8s1.5-5 4.5-5c2 0 2.5 1.5 2.5 2.5 0 2-3 2.5-7 2.5Z"/>
+      </svg>
+      <span>GIFT</span>
+    </button>
+    <button class="nav-btn" data-screen="setting">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3.2"/>
+        <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1 1.7 1.7 0 0 0-.34-1.87l-.06-.06A2 2 0 1 1 7.07 4.24l.06.06a1.7 1.7 0 0 0 1.87.34h.01a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87v.01a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1Z"/>
+      </svg>
+      <span>SETTING</span>
+    </button>
+  </nav>
+
+  <!-- PIN MODAL -->
+  <div class="overlay" id="pinOverlay">
+    <div class="modal pin-wrap" id="pinWrap">
+      <h3 id="pinTitle">암호 입력</h3>
+      <div class="sub" id="pinSub">숫자 4자리를 눌러주세요</div>
+      <div class="pin-dots">
+        <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+      </div>
+      <div class="pin-pad" id="pinPad"></div>
+    </div>
+  </div>
+
+  <!-- SCORE MODAL -->
+  <div class="overlay" id="scoreOverlay">
+    <div class="modal">
+      <h3>점수 주기</h3>
+      <div class="sub" id="scoreDateLabel"></div>
+      <input type="number" class="score-input" id="scoreInput" value="10" min="0" inputmode="numeric">
+      <div class="quick-row">
+        <button class="quick-btn" data-add="1">+1</button>
+        <button class="quick-btn" data-add="5">+5</button>
+        <button class="quick-btn" data-add="10">+10</button>
+        <button class="quick-btn" data-add="20">+20</button>
+      </div>
+      <div class="modal-row">
+        <button class="btn grey" id="scoreCancel">취소</button>
+        <button class="btn pink" id="scoreConfirm">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EARN MODAL -->
+  <div class="overlay" id="earnOverlay">
+    <div class="modal earn-modal" id="earnModal">
+      <div class="earn-emoji">🎉</div>
+      <h3>100점 달성! 축하해 소이야!</h3>
+      <div class="earn-name" id="earnName"></div>
+      <button class="btn pink" id="earnConfirm">선물함에 넣기</button>
+    </div>
+  </div>
+
+  <!-- USE CONFIRM MODAL -->
+  <div class="overlay" id="useOverlay">
+    <div class="modal">
+      <div class="earn-emoji">🎁</div>
+      <h3>선물을 사용할까요?</h3>
+      <div class="earn-name" id="useName"></div>
+      <div class="modal-row">
+        <button class="btn grey" id="useCancel">아직이요</button>
+        <button class="btn mint" id="useConfirm" style="background:var(--mint);box-shadow:0 4px 0 var(--mint-deep);">사용하기</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* ================= storage ================= */
+const KEY='soi_challenge_v1';
+const store={
+  async load(){
+    if(typeof window.storage!=='undefined'&&window.storage){
+      try{const r=await window.storage.get(KEY);return r?JSON.parse(r.value):null;}
+      catch(e){return null;}
+    }
+    try{const v=localStorage.getItem(KEY);return v?JSON.parse(v):null;}catch(e){return null;}
+  },
+  async save(s){
+    const v=JSON.stringify(s);
+    if(typeof window.storage!=='undefined'&&window.storage){
+      try{await window.storage.set(KEY,v);return;}catch(e){}
+    }
+    try{localStorage.setItem(KEY,v);}catch(e){}
+  }
+};
+
+let S={
+  score:0,
+  pin:'0000',
+  giftCurrent:'로블록스 30분',
+  giftNext:'아이스크림 1개',
+  entries:{},           // 'YYYY-MM-DD' -> 누적 점수
+  gifts:[]              // {name, earned:'YYYY-MM-DD', used:null|'YYYY-MM-DD'}
+};
+
+/* ================= utils ================= */
+const $=id=>document.getElementById(id);
+function todayStr(){const d=new Date();return fmt(d);}
+function fmt(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function pretty(ds){const[y,m,d]=ds.split('-');return y+'년 '+Number(m)+'월 '+Number(d)+'일';}
+function toast(msg){
+  const t=$('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._tm);t._tm=setTimeout(()=>t.classList.remove('show'),1800);
+}
+
+/* ================= navigation ================= */
+document.querySelectorAll('.nav-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    $('screen-'+b.dataset.screen).classList.add('active');
+    if(b.dataset.screen==='gift')renderGifts();
+    if(b.dataset.screen==='setting')renderSettings();
+  });
+});
+
+/* ================= PIN pad ================= */
+let pinBuf='',pinCb=null;
+(function buildPad(){
+  const pad=$('pinPad');
+  const keys=['1','2','3','4','5','6','7','8','9','C','0','←'];
+  keys.forEach(k=>{
+    const b=document.createElement('button');
+    b.className='pin-key'+((k==='C'||k==='←')?' func':'');
+    b.textContent=k;
+    b.addEventListener('click',()=>pressKey(k));
+    pad.appendChild(b);
+  });
+})();
+function openPin(title,cb){
+  pinBuf='';pinCb=cb;
+  $('pinTitle').textContent=title;
+  $('pinSub').textContent='숫자 4자리를 눌러주세요';
+  drawDots();
+  $('pinOverlay').classList.add('show');
+}
+function closePin(){$('pinOverlay').classList.remove('show');pinCb=null;}
+function drawDots(){
+  document.querySelectorAll('.pin-dot').forEach((d,i)=>d.classList.toggle('on',i<pinBuf.length));
+}
+function pressKey(k){
+  if(k==='C'){pinBuf='';drawDots();return;}
+  if(k==='←'){pinBuf=pinBuf.slice(0,-1);drawDots();return;}
+  if(pinBuf.length>=4)return;
+  pinBuf+=k;drawDots();
+  if(pinBuf.length===4){
+    const val=pinBuf;
+    setTimeout(()=>{if(pinCb)pinCb(val);},120);
+  }
+}
+function pinShake(msg){
+  const w=$('pinWrap');
+  $('pinSub').textContent=msg||'암호가 달라요! 다시 눌러주세요';
+  w.classList.remove('shake');void w.offsetWidth;w.classList.add('shake');
+  pinBuf='';drawDots();
+}
+$('pinOverlay').addEventListener('click',e=>{if(e.target===$('pinOverlay'))closePin();});
+
+/* ================= HOME: score + calendar ================= */
+let viewDate=new Date();
+function renderHome(){
+  $('scoreNum').textContent=S.score;
+  const pct=Math.min(S.score,100)/100;
+  $('gaugeFill').setAttribute('y',92-92*pct);
+  const remain=100-S.score;
+  $('remainText').innerHTML=remain>0
+    ?'선물까지 <b>'+remain+'점</b> 남았어요!'
+    :'<b>선물 획득!</b> 🎉';
+  $('currentGiftChip').textContent='이번 선물: '+(S.giftCurrent||'미설정');
+  renderCalendar();
+}
+function renderCalendar(){
+  const y=viewDate.getFullYear(),m=viewDate.getMonth();
+  $('calTitle').textContent=y+'년 '+(m+1)+'월';
+  const grid=$('calGrid');grid.innerHTML='';
+  const first=new Date(y,m,1).getDay();
+  const days=new Date(y,m+1,0).getDate();
+  const tStr=todayStr();
+  for(let i=0;i<first;i++){
+    const e=document.createElement('div');grid.appendChild(e);
+  }
+  for(let d=1;d<=days;d++){
+    const ds=fmt(new Date(y,m,d));
+    const cell=document.createElement('button');
+    cell.className='cal-cell';
+    const dow=new Date(y,m,d).getDay();
+    if(dow===0)cell.classList.add('sun');
+    if(dow===6)cell.classList.add('sat');
+    let inner='<span class="d">'+d+'</span>';
+    const isFuture=ds>tStr;
+    if(ds===tStr)cell.classList.add('today');
+    if(S.entries[ds]!==undefined){
+      inner+='<span class="stamp ok">❤️</span>';
+    }else if(ds<tStr){
+      inner+='<span class="stamp fail">✕</span>';
+    }
+    if(isFuture){cell.classList.add('dim');cell.disabled=true;}
+    cell.innerHTML=inner;
+    if(!isFuture){
+      cell.addEventListener('click',()=>{
+        openPin('아빠 암호 입력',(val)=>{
+          if(val===S.pin){closePin();openScoreModal(ds);}
+          else pinShake();
+        });
+      });
+    }
+    grid.appendChild(cell);
+  }
+}
+$('prevMonth').addEventListener('click',()=>{viewDate=new Date(viewDate.getFullYear(),viewDate.getMonth()-1,1);renderCalendar();});
+$('nextMonth').addEventListener('click',()=>{viewDate=new Date(viewDate.getFullYear(),viewDate.getMonth()+1,1);renderCalendar();});
+
+/* ================= score modal ================= */
+let scoreDate=null;
+function openScoreModal(ds){
+  scoreDate=ds;
+  $('scoreDateLabel').textContent=pretty(ds)+' · 소이에게 몇 점 줄까요?';
+  $('scoreInput').value=10;
+  $('scoreOverlay').classList.add('show');
+}
+document.querySelectorAll('.quick-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const cur=parseInt($('scoreInput').value)||0;
+    $('scoreInput').value=cur+parseInt(b.dataset.add);
+  });
+});
+$('scoreCancel').addEventListener('click',()=>$('scoreOverlay').classList.remove('show'));
+$('scoreOverlay').addEventListener('click',e=>{if(e.target===$('scoreOverlay'))$('scoreOverlay').classList.remove('show');});
+$('scoreConfirm').addEventListener('click',async()=>{
+  const n=parseInt($('scoreInput').value);
+  if(isNaN(n)||n<=0){toast('1점 이상 입력해주세요');return;}
+  $('scoreOverlay').classList.remove('show');
+  S.entries[scoreDate]=(S.entries[scoreDate]||0)+n;
+  S.score+=n;
+  const earned=[];
+  while(S.score>=100){
+    S.score-=100;
+    earned.push(S.giftCurrent||'깜짝 선물');
+    S.giftCurrent=S.giftNext||S.giftCurrent;
+  }
+  await store.save(S);
+  renderHome();
+  if(earned.length){showEarn(earned);}
+  else{toast('+'+n+'점! 잘했어 소이 ❤️');}
+});
+
+/* ================= earn ================= */
+let earnQueue=[];
+function showEarn(names){
+  earnQueue=names.slice();
+  nextEarn();
+}
+function nextEarn(){
+  const name=earnQueue.shift();
+  if(!name)return;
+  $('earnName').textContent='🎁 '+name;
+  $('earnOverlay').classList.add('show');
+  spawnConfetti();
+  $('earnConfirm').onclick=async()=>{
+    S.gifts.unshift({name:name,earned:todayStr(),used:null});
+    await store.save(S);
+    $('earnOverlay').classList.remove('show');
+    renderHome();
+    if(earnQueue.length){setTimeout(nextEarn,250);}
+    else{toast('선물함에 쏙! 🎁');}
+  };
+}
+function spawnConfetti(){
+  const m=$('earnModal');
+  m.querySelectorAll('.confetti').forEach(c=>c.remove());
+  const emo=['❤️','💛','⭐','🎀','💖','✨'];
+  for(let i=0;i<18;i++){
+    const c=document.createElement('div');
+    c.className='confetti';
+    c.textContent=emo[Math.floor(Math.random()*emo.length)];
+    c.style.left=(Math.random()*90+5)+'%';
+    c.style.animationDuration=(1.6+Math.random()*1.6)+'s';
+    c.style.animationDelay=(Math.random()*0.8)+'s';
+    m.appendChild(c);
+  }
+}
+
+/* ================= gifts ================= */
+let giftTab='avail';
+document.querySelectorAll('.tab-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    giftTab=b.dataset.tab;
+    renderGifts();
+  });
+});
+function renderGifts(){
+  const list=$('giftList');list.innerHTML='';
+  const items=S.gifts.filter(g=>giftTab==='avail'?!g.used:!!g.used);
+  if(!items.length){
+    list.innerHTML='<div class="empty"><span class="big">'+(giftTab==='avail'?'🎁':'🧸')+'</span>'
+      +(giftTab==='avail'?'아직 받은 선물이 없어요.<br>100점을 모아 선물을 받아보세요!':'아직 사용한 선물이 없어요.')+'</div>';
+    return;
+  }
+  items.forEach(g=>{
+    const idx=S.gifts.indexOf(g);
+    const card=document.createElement('div');
+    card.className='gift-card'+(g.used?' used':'');
+    card.innerHTML=
+      '<div class="gift-icon">'+(g.used?'✅':'🎁')+'</div>'+
+      '<div class="gift-info">'+
+        '<div class="gift-name">'+escapeHtml(g.name)+'</div>'+
+        '<div class="gift-date">받은 날: '+pretty(g.earned)+(g.used?'<br>사용한 날: '+pretty(g.used):'')+'</div>'+
+      '</div>'+
+      (g.used?'<div class="done-badge">사용 완료</div>':'<button class="use-btn" data-idx="'+idx+'">사용하기</button>');
+    list.appendChild(card);
+  });
+  list.querySelectorAll('.use-btn').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const idx=parseInt(b.dataset.idx);
+      openPin('아빠 암호 입력',(val)=>{
+        if(val===S.pin){closePin();openUseModal(idx);}
+        else pinShake();
+      });
+    });
+  });
+}
+let useIdx=null;
+function openUseModal(idx){
+  useIdx=idx;
+  $('useName').textContent='🎁 '+S.gifts[idx].name;
+  $('useOverlay').classList.add('show');
+}
+$('useCancel').addEventListener('click',()=>$('useOverlay').classList.remove('show'));
+$('useOverlay').addEventListener('click',e=>{if(e.target===$('useOverlay'))$('useOverlay').classList.remove('show');});
+$('useConfirm').addEventListener('click',async()=>{
+  if(useIdx===null)return;
+  S.gifts[useIdx].used=todayStr();
+  await store.save(S);
+  $('useOverlay').classList.remove('show');
+  renderGifts();
+  toast('선물 사용 완료! 재밌게 놀아 🥳');
+});
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+/* ================= settings ================= */
+function renderSettings(){
+  $('inpGiftCurrent').value=S.giftCurrent||'';
+  $('inpGiftNext').value=S.giftNext||'';
+}
+$('saveGifts').addEventListener('click',async()=>{
+  const c=$('inpGiftCurrent').value.trim();
+  const n=$('inpGiftNext').value.trim();
+  if(!c){toast('이번 라운드 선물을 입력해주세요');return;}
+  S.giftCurrent=c;S.giftNext=n;
+  await store.save(S);
+  renderHome();
+  toast('선물 설정 저장 완료 🎁');
+});
+$('changePin').addEventListener('click',()=>{
+  openPin('현재 암호 입력',(val)=>{
+    if(val!==S.pin){pinShake();return;}
+    pinBuf='';drawDots();
+    $('pinTitle').textContent='새 암호 입력';
+    $('pinSub').textContent='새로운 숫자 4자리를 눌러주세요';
+    pinCb=(nv)=>{
+      pinBuf='';drawDots();
+      $('pinTitle').textContent='새 암호 확인';
+      $('pinSub').textContent='한 번 더 눌러주세요';
+      pinCb=async(nv2)=>{
+        if(nv===nv2){
+          S.pin=nv;
+          await store.save(S);
+          closePin();
+          toast('암호가 변경되었어요 🔒');
+        }else{
+          closePin();
+          toast('두 암호가 달라요. 다시 시도해주세요');
+          setTimeout(()=>$('changePin').click(),400);
+        }
+      };
+    };
+  });
+});
+
+/* ================= init ================= */
+(async function init(){
+  const saved=await store.load();
+  if(saved){S=Object.assign(S,saved);}
+  else{await store.save(S);}
+  renderHome();
+})();
+</script>
+</body>
+</html>
